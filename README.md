@@ -8,6 +8,6 @@ I’m thrilled to introduce 🎶 Musical Instrument Playground 🎶, a web-based
 All from the comfort of your browser—no downloads needed!
 🔗 Try it here:
 
-[https://lnkd.in/g_7Tit-n](https://tdhanushkumar-music-instrument.static.hf.space/index.html)
+https://tdhanushkumar-music-instrument.static.hf.space/index.html
 
 Would love to hear your feedback or suggestions—let’s jam together! 🎼✨
