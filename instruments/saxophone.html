@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Saxophone Player</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+    }
+
+    .note-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #444;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #666;
+    }
+
+    button.playing {
+      background: #0f0;
+      transform: scale(1.1);
+      box-shadow: 0 0 10px #0f0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎷 Saxophone Player</h1>
+
+  <div class="note-buttons" id="buttons"></div>
+  <br>
+  <button onclick="playSong(twinkleSong)">▶️ Play Twinkle</button>
+  <button onclick="playSong(happyBirthdaySong)">🎉 Play Happy Birthday</button>
+
+
+  <script>
+    const twinkleSong = [
+  'C4', 'C4', 'G4', 'G4', 'A4', 'A4', 'G4',
+  'F4', 'F4', 'E4', 'E4', 'D4', 'D4', 'C4',
+  'G4', 'G4', 'F4', 'F4', 'E4', 'E4', 'D4',
+  'G4', 'G4', 'F4', 'F4', 'E4', 'E4', 'D4',
+  'C4', 'C4', 'G4', 'G4', 'A4', 'A4', 'G4',
+  'F4', 'F4', 'E4', 'E4', 'D4', 'D4', 'C4'
+];
+
+
+
+const happyBirthdaySong = [
+  'C4', 'C4', 'D4', 'C4', 'F4', 'E4',
+  'C4', 'C4', 'D4', 'C4', 'G4', 'F4',
+  'C4', 'C4', 'C5', 'A4', 'F4', 'E4', 'D4','Bb4', 'Bb4', 'A4', 'F4', 'G4', 'F4'
+];
+
+
+function playSong(song) {
+  let i = 0;
+  function playNext() {
+    if (i >= song.length) return;
+    const note = song[i];
+    const audio = new Audio(`../assets/sounds/saxophone/${note}.wav`);
+    audio.playbackRate = 15.0;
+    audio.play();
+    
+    const btn = [...document.querySelectorAll('button')].find(b => b.textContent === note);
+    if (btn) {
+      btn.classList.add('playing');
+      setTimeout(() => btn.classList.remove('playing'), 150);
+    }
+    
+    i++;
+    setTimeout(playNext, 400); // Change speed if needed
+  }
+  playNext();
+}
+
+    const notes = [
+      'A4','A5','As3','As4','B3','B4','C4','C5','Cs3','Cs4','Cs5','D3','D4','D5',
+      'Ds3','Ds4','Ds5','E3','E4','E5','F3','F4','F5','Fs3','Fs4','Fs5',
+      'G3','G4','G5','Gs3','Gs4','Gs5'
+    ];
+
+    const container = document.getElementById('buttons');
+
+    notes.forEach(note => {
+      const btn = document.createElement('button');
+      btn.textContent = note;
+
+      btn.onclick = () => {
+        const audio = new Audio(`../assets/sounds/saxophone/${note}.wav`);
+        audio.playbackRate = 15.0;
+        audio.play();
+
+        // Click animation
+        btn.classList.add('playing');
+        setTimeout(() => {
+          btn.classList.remove('playing');
+        }, 150);
+      };
+
+      container.appendChild(btn);
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trumpet Sounds</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #fdf6e3;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    .button-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 30px;
+    }
+    .sound-button {
+      padding: 15px 25px;
+      font-size: 18px;
+      border: none;
+      background-color: #f9a825;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.1s ease, background-color 0.2s;
+    }
+    .sound-button:hover {
+      background-color: #ef6c00;
+    }
+    .sound-button:active,
+    .sound-button.clicked {
+      transform: scale(0.95);
+      background-color: #e65100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+  <h1>🎺 Trumpet Sounds</h1>
+  <div class="button-container">
+    <button class="sound-button" onclick="playSound('A3')">A3</button>
+    <button class="sound-button" onclick="playSound('A5')">A5</button>
+    <button class="sound-button" onclick="playSound('As4')">As4</button>
+    <button class="sound-button" onclick="playSound('C4')">C4</button>
+    <button class="sound-button" onclick="playSound('C6')">C6</button>
+    <button class="sound-button" onclick="playSound('D5')">D5</button>
+    <button class="sound-button" onclick="playSound('Ds4')">Ds4</button>
+    <button class="sound-button" onclick="playSound('F3')">F3</button>
+    <button class="sound-button" onclick="playSound('F4')">F4</button>
+    <button class="sound-button" onclick="playSound('F5')">F5</button>
+    <button class="sound-button" onclick="playSound('G4')">G4</button>
+  </div>
+  <br>
+  <h2>Play a Song</h2>
+  <p>Click the button below to play a sequence of trumpet notes.</p>
+  
+  <button class="sound-button" onclick="playSequence(sequence)">▶ Play Song</button>
+
+  <script>
+    const sequence = [
+  { note: "C4", duration: 400 },
+  { note: "D5", duration: 300 },
+  { note: "F4", duration: 300 },
+  { note: "C6", duration: 500 },
+  { note: "A3", duration: 400 },
+  { note: "G4", duration: 400 },
+  { note: "As4", duration: 300 },
+  { note: "F5", duration: 500 }
+];
+
+function playSequence(seq) {
+  let delay = 0;
+
+  seq.forEach(({ note, duration }) => {
+    setTimeout(() => {
+      playSound(note);
+    }, delay);
+    delay += duration;
+  });
+}
+
+
+    function playSound(note) {
+      const audio = new Audio(`../assets/sounds/trumpet/${note}.wav`);
+      audio.playbackRate = 2.0;
+      audio.play();
+
+      const button = document.querySelector(`button[onclick="playSound('${note}')"]`);
+      button.classList.add('clicked');
+      setTimeout(() => {
+        button.classList.remove('clicked');
+      }, 150);
+    }
+  </script>
+</body>
+</html>

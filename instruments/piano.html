@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Full Virtual Piano</title>
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      font-family: sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .piano-row {
+      display: flex;
+      justify-content: center;
+      margin: 30px 0;
+      gap: 2px;
+      flex-wrap: nowrap;
+    }
+
+    .key-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .key {
+      width: 40px;
+      height: 180px;
+      background: white;
+      border: 1px solid #333;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    .key.black {
+      position: absolute;
+      width: 30px;
+      height: 120px;
+      background: black;
+      color: white;
+      top: 0;
+      left: 28px;
+      z-index: 2;
+    }
+
+    .key-label {
+      position: absolute;
+      bottom: 5px;
+      width: 100%;
+      color: rgb(255, 7, 7);
+      text-align: center;
+      font-size: 10px;
+      pointer-events: none;
+    }
+
+    .key.black .key-label {
+      color: white;
+    }
+
+    .key.active {
+      background-color: #ffd700 !important;
+      box-shadow: 0 0 15px gold;
+    }
+
+    .key.black.active {
+      background-color: #ff9900 !important;
+    }
+
+    .lyrics-box {
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      white-space: pre-line;
+      margin-top: 30px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🎹 Virtual Piano</h1>
+
+  <div class="piano-row" id="row1"></div>
+  <div class="piano-row" id="row2"></div>
+  <button id="pianoBtn">▶️ Play Piano Melody</button>
+
+  <button onclick="playHappyBirthday()">▶️ Play Happy Birthday</button>
+  <button onclick="playShapeOfYou()">▶️ Play Shape of You</button>
+  <button onclick="playDairyMilkChocolate()">▶️ Play Dairy Milk Song</button>
+  <button onclick="playEnnoduIntro()">▶️ Play Ennodu Nee Irunthaal</button>
+
+
+  <div id="note-display" style="margin-top: 20px; font-size: 18px; font-weight: bold;"></div>
+
+  <div class="lyrics-box" id="lyricsDisplay">🎵 Lyrics will appear here...</div>
+
+  <script>
+    const pianoSequence = [
+      'G4', 'A4', // Kiss me, close your eyes
+      'G4', 'A4',
+      'B4', 'A4', // Miss me, close your eyes
+      'G4', 'A4',
+      'A4', 'B4', 'C5', // I can read your lips
+      'C5', 'B4', 'A4', // On your fingertips
+      'G4', 'A4', 'B4', // I can feel your smile
+      'A4', 'G4', // Come on my lips
+      'F4', 'G4', 'A4', 'G4', 'F4' // Happiness in your eyes
+    ];
+
+    let currentIndex = 0;
+    let pianoPlaying = false;
+
+    function playPianoLoop() {
+      if (!pianoPlaying) return;
+
+      const note = pianoSequence[currentIndex];
+      const audio = new Audio(`../assets/sounds/piano/${note}.mp3`);
+      audio.play();
+
+      currentIndex = (currentIndex + 1) % pianoSequence.length;
+      setTimeout(playPianoLoop, 600); // adjust speed (600ms delay)
+    }
+
+    const pianoBtn = document.getElementById('pianoBtn');
+    pianoBtn.addEventListener('click', () => {
+      if (!pianoPlaying) {
+        pianoPlaying = true;
+        currentIndex = 0;
+        playPianoLoop();
+        pianoBtn.textContent = '⏹ Stop Piano';
+      } else {
+        pianoPlaying = false;
+        pianoBtn.textContent = '▶️ Play Piano Melody';
+      }
+    });
+    let isPlaying = false;
+
+    const lyrics = {
+      happybirthday: `🎵 Happy Birthday 🎵
+    
+    Happy birthday to you  
+    Happy birthday to you  
+    Happy birthday dear [Name]  
+    Happy birthday to you!`,
+    
+      shapeofyou: `🎵 Shape of You 🎵
+    
+    The club isn't the best place to find a lover  
+    So the bar is where I go  
+    Me and my friends at the table doing shots  
+    Drinking fast and then we talk slow...`,
+    
+      dairymilk: `🎵 Dairy Milk Chocolate 🎵
+    
+    kiss me,
+
+close your eyes,
+
+miss me,
+
+close your eyes,
+
+
+i can read your lips,
+
+on your fingertips,
+
+i can feel your smile,
+
+come on my lips,
+
+and happiness in your eyes.
+`,
+    
+      ennodu: `🎵 Ennodu Nee Irundhaal 🎵
+    
+    Ennodu Nee Irunthal
+Uyirodu nan Irupen
+Ennodu Nee Irunthal
+Uyirodu nan Irupean
+Ennodu Nee Irunthal
+Uyirodu nan Irupen
+Ennodu Nee Irunthal
+Uyirodu nan Irupen`
+    };
+    
+
+    function playNote(note) {
+      if (isPlaying) return;
+      const audio = new Audio(`../assets/sounds/piano/${note}.mp3`);
+      audio.play();
+      showNote(note);
+      animateKey(note);
+    }
+
+    function showNote(note) {
+      const noteDisplay = document.getElementById('note-display');
+      noteDisplay.textContent = `Playing: ${note}`;
+    }
+
+    function animateKey(note) {
+      const keyElements = document.querySelectorAll('.key');
+      keyElements.forEach(key => {
+        if (key.textContent.trim() === note) {
+          key.classList.add('active');
+          setTimeout(() => key.classList.remove('active'), 200);
+        }
+      });
+    }
+
+    function playSequence(sequence, interval, songKey = '') {
+      if (isPlaying) return;
+      isPlaying = true;
+
+      if (songKey) {
+        document.getElementById('lyricsDisplay').textContent = lyrics[songKey] || '🎵 Lyrics not available';
+      }
+
+      let delay = 0;
+      sequence.forEach((note, index) => {
+        setTimeout(() => {
+          const audio = new Audio(`../assets/sounds/piano/${note}.mp3`);
+          audio.play();
+          showNote(note);
+          animateKey(note);
+          if (index === sequence.length - 1) {
+            setTimeout(() => {
+              isPlaying = false;
+              document.getElementById('note-display').textContent = '';
+            }, interval);
+          }
+        }, delay);
+        delay += interval;
+      });
+    }
+
+    function playHappyBirthday() {
+      const sequence = ['C4', 'C4', 'D4', 'C4', 'F4', 'E4', 'C4', 'C4', 'D4', 'C4', 'G4', 'F4', 'C4', 'C4', 'C5', 'A4', 'F4', 'E4', 'D4', 'Bb4', 'Bb4', 'A4', 'F4', 'G4', 'F4'];
+      playSequence(sequence, 500, 'happybirthday');
+    }
+
+    function playShapeOfYou() {
+      const sequence = ['Gb4', 'Db5', 'Db5', 'Db5', 'Db5', 'Gb4', 'Ab4', 'Gb4', 'Db4', 'Db4', 'Db4', 'Gb4', 'Ab4', 'Ab4', 'Ab4', 'Ab4', 'Gb4', 'Gb4', 'E4', 'Db4', 'E4', 'Gb4', 'Ab4', 'Gb4', 'E4', 'E4', 'Gb4', 'Db4', 'Db4', 'Gb4', 'Ab4', 'E4', 'E4', 'Gb4', 'Db4'];
+      playSequence(sequence, 420, 'shapeofyou');
+    }
+
+    function playDairyMilkChocolate() {
+      const sequence = ['G4', 'A4', 'G4', 'E4', 'G4', 'A4', 'B4', 'G4', 'E4', 'F4', 'G4', 'A4', 'B4', 'G4'];
+      playSequence(sequence, 500, 'dairymilk');
+    }
+
+    function playEnnoduIntro() {
+      const sequence = [
+  // Kiss me, close your eyes
+  'G4', 'G4', 'A4',
+  'G4', 'G4', 'A4',
+
+  // Miss me, close your eyes
+  'A4', 'B4', 'A4',
+  'G4', 'G4', 'A4',
+
+  // I can read your lips
+  'A4', 'C5', 'B4',
+
+  // On your fingertips
+  'C5', 'A4', 'G4',
+
+  // I can feel your smile
+  'G4', 'A4', 'B4',
+
+  // Come on my lips
+  'A4', 'G4',
+
+  // And happiness in your eyes
+  'F4', 'G4', 'A4', 'F4'
+];
+
+          playSequence(sequence, 500, 'ennodu');
+    }
+
+    const notes = ['A0', 'Bb0', 'B0', 'C1', 'Db1', 'D1', 'Eb1', 'E1', 'F1', 'Gb1', 'G1', 'Ab1', 'A1', 'Bb1', 'B1', 'C2', 'Db2', 'D2', 'Eb2', 'E2', 'F2', 'Gb2', 'G2', 'Ab2', 'A2', 'Bb2', 'B2', 'C3', 'Db3', 'D3', 'Eb3', 'E3', 'F3', 'Gb3', 'G3', 'Ab3', 'A3', 'Bb3', 'B3', 'C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4', 'C5', 'Db5', 'D5', 'Eb5', 'E5', 'F5', 'Gb5', 'G5', 'Ab5', 'A5', 'Bb5', 'B5', 'C6', 'Db6', 'D6', 'Eb6', 'E6', 'F6', 'Gb6', 'G6', 'Ab6', 'A6', 'Bb6', 'B6', 'C7', 'Db7', 'D7', 'Eb7', 'E7', 'F7', 'Gb7', 'G7', 'Ab7', 'A7', 'Bb7', 'B7', 'C8'];
+    const blackNotes = ['Db', 'Eb', 'Gb', 'Ab', 'Bb'];
+    const rows = [document.getElementById('row1'), document.getElementById('row2')];
+    const chunkSize = Math.ceil(notes.length / 2);
+
+    for (let r = 0; r < 2; r++) {
+      const chunk = notes.slice(r * chunkSize, (r + 1) * chunkSize);
+      for (let i = 0; i < chunk.length; i++) {
+        const note = chunk[i];
+        const isBlack = blackNotes.some(b => note.startsWith(b));
+        if (!isBlack) {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'key-wrapper';
+          const whiteKey = document.createElement('div');
+          whiteKey.className = 'key';
+          whiteKey.innerHTML = `<div class="key-label">${note}</div>`;
+          whiteKey.onclick = () => {
+            if (!isPlaying) playNote(note);
+          };
+          wrapper.appendChild(whiteKey);
+          const nextNote = chunk[i + 1];
+          if (nextNote && blackNotes.some(b => nextNote.startsWith(b))) {
+            const blackKey = document.createElement('div');
+            blackKey.className = 'key black';
+            blackKey.innerHTML = `<div class="key-label">${nextNote}</div>`;
+            blackKey.onclick = () => {
+              if (!isPlaying) playNote(nextNote);
+            };
+            wrapper.appendChild(blackKey);
+            i++;
+          }
+          rows[r].appendChild(wrapper);
+        }
+      }
+    }
+  </script>
+</body>
+</html>

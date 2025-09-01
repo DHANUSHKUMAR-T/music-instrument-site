@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Drum Kit</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0e0e0e;
+      color: #fff;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+    }
+
+    .drum-kit {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .drum {
+      background-color: #222;
+      border: 2px solid #fff;
+      border-radius: 10px;
+      padding: 20px;
+      width: 130px;
+      height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.1s, background-color 0.1s;
+    }
+
+    .drum:hover {
+      background-color: #444;
+      transform: scale(1.05);
+    }
+    .drum.active {
+      transform: scale(1.1);
+      background-color: #f9c74f; /* yellow highlight */
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🥁 Drum Kit</h1>
+
+  <div class="drum-kit">
+    <div class="drum" data-sound="A1">Shaker</div>
+    <div class="drum" data-sound="A2">Kick</div>
+    <div class="drum" data-sound="A3">Hi-Hat</div>
+    <div class="drum" data-sound="A4">Bomb</div>
+    <div class="drum" data-sound="A5">Crash</div>
+    <div class="drum" data-sound="A6">Snare</div>
+  </div>
+<div id="drum-pad" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px;"></div>
+
+<script>
+  const drums = document.querySelectorAll('.drum');
+  let playing = false;
+  let currentIndex = 0;
+
+  const drumSequence = [
+    'A2', 'A3', 'A6', // Kick, Hi-Hat, Snare
+    'A3', 'A2', 'A3', // Hi-Hat, Kick, Hi-Hat
+    'A6', 'A3', 'A2', // Snare, Hi-Hat, Kick
+    'A1', 'A4', 'A5'  // Shaker, Bomb, Crash
+  ];
+
+  // Play drum sound with animation
+  function playDrum(sound) {
+    const drum = document.querySelector(`.drum[data-sound="${sound}"]`);
+    if (!drum) return;
+
+    // Add animation effect
+    drum.classList.add('active');
+    setTimeout(() => drum.classList.remove('active'), 150);
+
+    // Play audio
+    const audio = new Audio(`../assets/sounds/drum/${sound}.wav`);
+    audio.play();
+  }
+
+  // Manual click handler
+  drums.forEach(drum => {
+    drum.addEventListener('click', () => {
+      const sound = drum.getAttribute('data-sound');
+      playDrum(sound);
+    });
+  });
+
+  // Auto loop function
+  function playDrumLoop() {
+    if (!playing) return;
+
+    const sound = drumSequence[currentIndex];
+    playDrum(sound);
+
+    currentIndex = (currentIndex + 1) % drumSequence.length;
+    setTimeout(playDrumLoop, 400); // Adjust delay here
+  }
+
+  // Create Play/Stop button
+  const startBtn = document.createElement('button');
+  startBtn.textContent = '▶️ Play Song Beat';
+  startBtn.style.marginTop = '30px';
+  startBtn.style.padding = '10px 20px';
+  startBtn.style.fontSize = '18px';
+  document.body.appendChild(startBtn);
+
+  startBtn.addEventListener('click', () => {
+    playing = !playing;
+    if (playing) {
+      currentIndex = 0;
+      playDrumLoop();
+      startBtn.textContent = '⏹ Stop Beat';
+    } else {
+      startBtn.textContent = '▶️ Play Song Beat';
+    }
+  });
+</script>
+
+
+</body>
+</html>
